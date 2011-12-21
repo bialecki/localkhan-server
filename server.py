@@ -1,4 +1,5 @@
 import json
+import os
 
 from bottle import route, request, run, static_file
 
@@ -18,6 +19,10 @@ MAPPING = {
     '/video/adding-decimals--old' : '0mOH-qNGM7M.ogv',
     '/video/subtracting-decimals--old' : 'mvOkMYCygps.ogv',
 }
+
+@route('/static/<filepath:path>')
+def static_files(filepath):
+    return static_file(filepath, root=os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static'))
 
 @route('/find/video')
 def find_video():
