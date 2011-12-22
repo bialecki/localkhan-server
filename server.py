@@ -1,24 +1,11 @@
 import json
 import os
+import re
 
+import requests
 from bottle import route, request, run, static_file
 
-MAPPING = {
-    '/video/basic-addition' : 'AuX7nPBqDts.ogv',
-    '/video/level-2-addition' : 't2L3JFOqTEk.ogv',
-    # '/video/addition-3' : '27Kp7HJYj2c.ogv',
-    '/video/addition-3' : 'e_SpXIw_Qts.ogv',
-    '/video/addition-4' : 'fOXo4p4WDKM.ogv',
-    # '/video/basic-subtraction' : 'aNqG4ChKShI.ogv',
-    '/video/basic-subtraction' : 'incKJchBCLo.ogv',
-    '/video/subtraction-2' : 'ZaqOUE3H1mE.ogv',
-    '/video/subtraction-3---introduction-to-borrowing-or-regrouping' : 'GBtcGO44e-A.ogv',
-    '/video/alternate-mental-subtraction-method' : 'omUfrXtHtN0.ogv',
-    '/video/level-4-subtraction' : 'fWan_T0enj4.ogv',
-    '/video/why-borrowing-works' : 'SxZUFA2SGX8.ogv',
-    '/video/adding-decimals--old' : '0mOH-qNGM7M.ogv',
-    '/video/subtracting-decimals--old' : 'mvOkMYCygps.ogv',
-}
+MAPPING = {}
 
 @route('/static/<filepath:path>')
 def static_files(filepath):
@@ -26,10 +13,24 @@ def static_files(filepath):
 
 @route('/find/video')
 def find_video():
+
+    if request.query.path not in MAPPING:
+        # Figure out the video id.
+        response = requests.get('http://www.khanacademy.org' + request.query.path)
+        
+        if response.status == 200:
+            match = re.search('http://www.archive.org/download/[^"]*/([^/]+\.mp4)', response.content)
+            MAPPING[request.query.path] = match.group(1) if match else None
+        else:
+            MAPPING[request.query.path] = None
+
+    location = MAPPING.get(request.query.path)
+
     return {
-        'success' : True,
+        'success' : bool(location),
         'data' : {
-            'url' : '/static/video/%s' % MAPPING[request.query.path],
+            'url' : '/static/video/%s' % location if location else None,
+            'format' : 'ogv',
         }
     }
 
