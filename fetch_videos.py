@@ -14,7 +14,7 @@ def retrieve_video(url, file_name):
     f = open(file_name, 'wb')
     meta = u.info()
     file_size = int(meta.getheaders('Content-Length')[0])
-    print 'Downloading: %s MB' % float(file_size)/1024/1024
+    print 'Downloading: %s MB' % (float(file_size)/1024/1024)
 
     file_size_dl = 0
     block_sz = 8192
