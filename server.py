@@ -18,8 +18,10 @@ def find_video():
         # Figure out the video id.
         response = requests.get('http://www.khanacademy.org' + request.query.path)
         
+        print response.content
+        
         if response.status_code == 200:
-            match = re.search('http://www.archive.org/download/[^"]*/([^/]+)\.mp4', response.content)
+            match = re.search('http://s3.amazonaws.com/KA-youtube-converted/[^/]+/([^/]+)\.mp4', response.content)
             MAPPING[request.query.path] = ('%s.ogv' % match.group(1)) if match else None
         else:
             MAPPING[request.query.path] = None
