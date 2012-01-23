@@ -52,10 +52,10 @@ if __name__ == '__main__':
         playlist_videos = json.loads(response.content)
         
         for i, video in enumerate(playlist_videos):
-            filename = os.path.join(root_dir, '%s.%s' % (video['youtube_id'], format))
-            if not os.path.exists(filename):
+            file_name = os.path.join(root_dir, '%s.%s' % (video['youtube_id'], format))
+            if not os.path.exists(file_name):
                 url = 'http://www.archive.org/download/KA-converted-%s/%s.%s' % (video['youtube_id'], video['youtube_id'], format)
-                print 'Fetching %s (%s/%s)...' % (video['title'], i + 1, len(playlist_videos))
-                retrieve_video(url, filename)
+                print 'Fetching %s (%s/%s) at %s...' % (video['title'], i + 1, len(playlist_videos), file_name)
+                retrieve_video(url, file_name)
             else:
-                print 'Already have %s (%s/%s)...' % (video['title'], i + 1, len(playlist_videos))
+                print 'Already have %s (%s/%s) at %s...' % (video['title'], i + 1, len(playlist_videos), file_name)
